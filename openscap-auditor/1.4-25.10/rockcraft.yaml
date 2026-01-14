@@ -1,0 +1,37 @@
+name: openscap-auditor
+base: ubuntu@25.10
+version: '1.4' # just for humans. Semantic versioning is recommended
+summary: Single-line elevator pitch for your amazing rock # 79 char long summary
+description: |
+    This is my-rock-name's description. You have a paragraph or two to tell the
+    most important story about it. Keep it under 100 words though,
+    we live in tweetspace and your description wants to look good in the
+    container registries out there.
+platforms: # the platforms this rock should be built on and run on
+    amd64:
+
+parts:
+    get-datastream:
+        plugin: nil
+        build-packages:
+          - curl
+          - unzip
+        override-pull: |
+          ARCHIVE_NAME=$(curl -s https://api.github.com/repos/ComplianceAsCode/content/releases/latest | grep "name" | grep "scap-security.*.zip" | grep -v "\.sha" | cut -d \" -f4)
+  
+          curl -L -o ${ARCHIVE_NAME} https://github.com/ComplianceAsCode/content/releases/latest/download/${ARCHIVE_NAME}
+          unzip -j -d ${CRAFT_PART_INSTALL}/scap-security-guide-latest  ${ARCHIVE_NAME} "${ARCHIVE_NAME%.zip}/ssg-ubuntu*04-ds.xml"
+          cd ${CRAFT_PART_INSTALL}/scap-security-guide-latest
+          for file in ./ssg-ubuntu2*04-ds.xml; do \
+            base="${file%-ds.xml}"; \
+            mv "$file" "${base}-stig-ds.xml"; \
+            cp "${base}-stig-ds.xml" "${base}-cis-ds.xml"; \
+          done
+
+    oscap:
+        plugin: nil
+        stage-packages:
+          - docker.io
+          - openscap-utils
+
+          
