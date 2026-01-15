@@ -86,6 +86,7 @@ jobs:
     uses: canonical/oci-factory/.github/workflows/Test-Rock.yaml@main
     with:
       oci-archive-name: ${{ matrix.artifact-name }}
+      trivyignore-path: .trivyignore
 
   upload-ghcr:
     needs: [read-config, test]
