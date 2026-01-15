@@ -63,7 +63,7 @@ VERSION_ID=2204
 docker run --privileged --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ${PWD}:/report \
-  ${AUDITOR_IMAGE_NAME} exec \
+  ghcr.io/canonical/openscap-auditor-rock/openscap-auditor:1.4-25.10_edge exec \
   oscap-docker \
   image ${TARGET_IMAGE} \
   xccdf eval \
